@@ -1,18 +1,18 @@
 <section class="search">
   <md-card>
     <md-card-content>
-      <button class="github-btn"
+      <md-button class="github-btn"
         ng-hide="app.isLoggedIn()"
         ng-click="app.loginToGithub()">
         <i class="fa fa-github"></i>
         Login to GitHub
-      </button>
-      <button class="github-btn"
+      </md-button>
+      <md-button class="github-btn"
         ng-show="app.isLoggedIn()"
         ng-click="app.logout()">
         <i class="fa fa-github"></i>
         Logout
-      </button>
+      </md-button>
       <form name="app.github">
         <md-input-container>
           <label for="githubOrganization">
