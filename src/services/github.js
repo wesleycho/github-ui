@@ -10,7 +10,7 @@ function Github($http, $q) {
       sha: commit.sha,
       url: commit.html_url,
       author: {
-        name: commit.author.login
+        name: commit.author ? commit.author.login : commit.commit.author.name
       },
       date: new Date(commit.commit.author.date),
       messages: commit.commit.message.split('\n')
