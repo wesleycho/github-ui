@@ -8,6 +8,10 @@ function App(Github) {
     this.repository = null;
     this.commits = null;
 
+    if (!this.isLoggedIn()) {
+      return;
+    }
+
     Github.getRepositoriesForOrg(this.organizationName)
       .then(org => {
         // In this situation, a more fresh request is made
@@ -35,6 +39,27 @@ function App(Github) {
           this.github.githubOrganization.$setValidity('not-found', false);
         }
       });
+  };
+
+  this.isLoggedIn = () => {
+    return Github.isLoggedIn;
+  };
+
+  this.loginToGithub = () => {
+    Github.login()
+      .then(() => {
+        if (this.organizationName) {
+          this.getRepositories();
+        }
+      });
+  };
+
+  this.logout = () => {
+    Github.logout();
+    this.organization = null;
+    this.repositories = null;
+    this.repository = null;
+    this.commits = null;
   };
 
   this.selectRepository = (repository) => {

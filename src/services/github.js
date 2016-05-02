@@ -1,5 +1,10 @@
-Github.$inject = ['$http', '$q', 'GITHUB_KEY'];
-function Github($http, $q, GITHUB_KEY) {
+Github.$inject = ['$http', '$q'];
+function Github($http, $q) {
+  let ref = new Firebase(`incandescent-inferno-5723.firebaseio.com`);
+  let isLoggedIn = false;
+  let accessToken = 'abc123';
+  let hasAccessToken = false;
+
   function formatCommit(commit) {
     return {
       sha: commit.sha,
@@ -40,7 +45,7 @@ function Github($http, $q, GITHUB_KEY) {
       return $http.get(`https://api.github.com/repos/${org}/${repo}/commits`, {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token ${GITHUB_KEY}`
+          Authorization: `token ${accessToken}`
         }
       }).then(response => {
         if (!angular.isArray(response.data)) {
@@ -62,7 +67,7 @@ function Github($http, $q, GITHUB_KEY) {
       return $http.get(`https://api.github.com/orgs/${org}/repos`, {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token ${GITHUB_KEY}`
+          Authorization: `token ${accessToken}`
         },
         params: {
           per_page: 10000
@@ -81,10 +86,35 @@ function Github($http, $q, GITHUB_KEY) {
           repositories: response.data.map(formatRepository)
         };
       });
+    },
+    get hasAccessToken() {
+      return hasAccessToken;
+    },
+    get isLoggedIn() {
+      return isLoggedIn;
+    },
+    login() {
+      return $q((resolve, reject) => {
+        ref.authWithOAuthPopup('github', (error, authData) => {
+          if (error) {
+            reject(error);
+          } else {
+            isLoggedIn = true;
+            hasAccessToken = true;
+            accessToken = authData.github.accessToken;
+
+            resolve(authData);
+          }
+        });
+      });
+    },
+    logout() {
+      isLoggedIn = false;
+      hasAccessToken = false;
+      ref.unauth();
     }
   };
 }
 
-angular.module('netflix.github.query', [])
-  .constant('GITHUB_KEY', 'b4a2435c408f3643eec67192bc98e9ea3ee98a06')
+angular.module('netflix.github.query', ['firebase'])
   .factory('Github', Github);

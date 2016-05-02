@@ -15,11 +15,13 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'testHelper.js',
       'node_modules/angular/angular.js',
       'node_modules/angular-animate/angular-animate.js',
       'node_modules/angular-aria/angular-aria.js',
       'node_modules/angular-messages/angular-messages.js',
       'node_modules/angular-material/angular-material.js',
+      'node_modules/angularfire/dist/angularfire.min.js',
       'node_modules/angular-mocks/angular-mocks.js',
       'src/services/github.js',
       'src/components/app/app.js',

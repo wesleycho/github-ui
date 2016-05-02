@@ -2,9 +2,6 @@ describe('Github', () => {
   let $http, $httpBackend, $rootScope, Github;
 
   beforeEach(module('netflix.github.query'));
-  beforeEach(module(function($provide) {
-    $provide.constant('GITHUB_KEY', 'foo');
-  }));
   beforeEach(inject(function(_$http_, _$httpBackend_, _$rootScope_, _Github_) {
     $http = _$http_;
     $httpBackend = _$httpBackend_;
@@ -90,7 +87,7 @@ describe('Github', () => {
       expect($http.get).toHaveBeenCalledWith('https://api.github.com/orgs/foobar/repos', {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token foo`
+          Authorization: `token abc123`
         },
         params: {
           per_page: 10000
@@ -119,7 +116,7 @@ describe('Github', () => {
       expect($http.get).toHaveBeenCalledWith('https://api.github.com/orgs/foobar/repos', {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token foo`
+          Authorization: `token abc123`
         },
         params: {
           per_page: 10000
@@ -145,7 +142,7 @@ describe('Github', () => {
       expect($http.get).toHaveBeenCalledWith('https://api.github.com/orgs/foobar/repos', {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token foo`
+          Authorization: `token abc123`
         },
         params: {
           per_page: 10000
@@ -186,7 +183,7 @@ describe('Github', () => {
       expect($http.get).toHaveBeenCalledWith('https://api.github.com/repos/foo/bar/commits', {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token foo`
+          Authorization: `token abc123`
         }
       });
 
@@ -209,7 +206,7 @@ describe('Github', () => {
       expect($http.get).toHaveBeenCalledWith('https://api.github.com/repos/foo/bar/commits', {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token foo`
+          Authorization: `token abc123`
         }
       });
 
@@ -229,7 +226,7 @@ describe('Github', () => {
       expect($http.get).toHaveBeenCalledWith('https://api.github.com/repos/foo/bar/commits', {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token foo`
+          Authorization: `token abc123`
         }
       });
 
@@ -304,12 +301,48 @@ describe('Github', () => {
       expect($http.get).toHaveBeenCalledWith('https://api.github.com/repos/foo/bar/commits', {
         headers: {
           Accept: 'application/vnd.github.v3+json',
-          Authorization: `token foo`
+          Authorization: `token abc123`
         }
       });
 
       $rootScope.$digest();
       $httpBackend.flush();
     });
+  });
+
+  it('should log in to GitHub and set up auth token', () => {
+    window.Firebase.prototype.authWithOAuthPopup.and.callFake((type, cb) => {
+      expect(type).toBe('github');
+      cb(null, {
+        github: {
+          accessToken: 'def456'
+        }
+      });
+    });
+    expect(Github.isLoggedIn).toBe(false);
+    expect(Github.hasAccessToken).toBe(false);
+
+    Github.login()
+      .then((auth) => {
+        expect(auth).toEqual({
+          github: {
+            accessToken: 'def456'
+          }
+        });
+        expect(Github.isLoggedIn).toBe(true);
+        expect(Github.hasAccessToken).toBe(true);
+      });
+
+    expect(window.Firebase.prototype.authWithOAuthPopup).toHaveBeenCalled();
+
+    $rootScope.$digest();
+  });
+
+  it('should log out of GitHub', () => {
+    Github.logout();
+
+    expect(window.Firebase.prototype.unauth).toHaveBeenCalled();
+    expect(Github.isLoggedIn).toBe(false);
+    expect(Github.hasAccessToken).toBe(false);
   });
 });

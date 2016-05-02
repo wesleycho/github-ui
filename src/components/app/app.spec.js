@@ -42,7 +42,19 @@ describe('app component', () => {
       expect(app.github.githubOrganization.$setValidity).toHaveBeenCalledWith('not-found', true);
     });
 
+    it('should not query when not logged in', () => {
+      spyOn(app, 'isLoggedIn').and.returnValue(false);
+      spyOn(Github, 'getRepositoriesForOrg');
+
+      app.getRepositories();
+
+      $rootScope.$digest();
+
+      expect(Github.getRepositoriesForOrg).not.toHaveBeenCalled();
+    });
+
     it('should successfully get the organization and repositories', () => {
+      spyOn(app, 'isLoggedIn').and.returnValue(true);
       spyOn(Github, 'getRepositoriesForOrg').and.returnValue($q.resolve({
         organization: {
           name: 'foobar'
@@ -67,6 +79,7 @@ describe('app component', () => {
     });
 
     it('should do nothing when the organization name queried for is not the same as the current one', () => {
+      spyOn(app, 'isLoggedIn').and.returnValue(true);
       spyOn(Github, 'getRepositoriesForOrg').and.returnValue($q.resolve({
         organization: {
           name: 'foobar'
@@ -90,6 +103,7 @@ describe('app component', () => {
     });
 
     it('should do nothing when the organization name queried for is not the same as the current one and response is rejected', () => {
+      spyOn(app, 'isLoggedIn').and.returnValue(true);
       spyOn(Github, 'getRepositoriesForOrg').and.returnValue($q.reject('Organization not found'));
       app.organizationName = 'foobar';
 
@@ -106,6 +120,7 @@ describe('app component', () => {
     });
 
     it('should set the validity to not found when organization is not found', () => {
+      spyOn(app, 'isLoggedIn').and.returnValue(true);
       spyOn(Github, 'getRepositoriesForOrg').and.returnValue($q.reject('Organization not found'));
       app.organizationName = 'foobar';
 
@@ -123,6 +138,7 @@ describe('app component', () => {
     });
 
     it('should set the validity to not found when organization is not found', () => {
+      spyOn(app, 'isLoggedIn').and.returnValue(true);
       spyOn(Github, 'getRepositoriesForOrg').and.returnValue($q.reject({
         status: 404
       }));
@@ -197,5 +213,51 @@ describe('app component', () => {
 
       expect(app.noCommits).toBe(true);
     });
+  });
+
+  describe('login', () => {
+    it('should be successful and not query for repositories', () => {
+      app.organizationName = '';
+      spyOn(Github, 'login').and.returnValue($q.resolve());
+      spyOn(app, 'getRepositories');
+
+      app.loginToGithub();
+
+      expect(Github.login).toHaveBeenCalled();
+
+      $rootScope.$digest();
+
+      expect(app.getRepositories).not.toHaveBeenCalled();
+    });
+
+    it('should be successful and query for repositories', () => {
+      app.organizationName = 'foo';
+      spyOn(Github, 'login').and.returnValue($q.resolve());
+      spyOn(app, 'getRepositories');
+
+      app.loginToGithub();
+
+      expect(Github.login).toHaveBeenCalled();
+
+      $rootScope.$digest();
+
+      expect(app.getRepositories).toHaveBeenCalled();
+    });
+  });
+
+  it('should logout successfully', () => {
+    app.organization = {};
+    app.repositories = [];
+    app.repository = {};
+    app.commits = [];
+    spyOn(Github, 'logout');
+
+    app.logout();
+
+    expect(Github.logout).toHaveBeenCalled();
+    expect(app.organization).toBe(null);
+    expect(app.repositories).toBe(null);
+    expect(app.repository).toBe(null);
+    expect(app.commits).toBe(null);
   });
 });

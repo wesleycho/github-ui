@@ -1,23 +1,41 @@
-<form name="app.github">
-  <md-input-container>
-    <label for="githubOrganization">
-      GitHub Organization
-    </label>
-    <input name="githubOrganization"
-      ng-model="app.organizationName"
-      ng-model-options="{debounce: 75}"
-      ng-change="app.getRepositories()"
-      required>
-    <div class="error-messages"
-      ng-messages="app.github.githubOrganization.$error"
-      ng-show="app.github.githubOrganization.$dirty">
-      <div ng-message="required">This is required!</div>
-      <div ng-message="not-found">
-        Organization not found
-      </div>
-    </div>
-  </md-input-container>
-</form>
+<section class="search">
+  <md-card>
+    <md-card-content>
+      <button class="github-btn"
+        ng-hide="app.isLoggedIn()"
+        ng-click="app.loginToGithub()">
+        <i class="fa fa-github"></i>
+        Login to GitHub
+      </button>
+      <button class="github-btn"
+        ng-show="app.isLoggedIn()"
+        ng-click="app.logout()">
+        <i class="fa fa-github"></i>
+        Logout
+      </button>
+      <form name="app.github">
+        <md-input-container>
+          <label for="githubOrganization">
+            GitHub Organization
+          </label>
+          <input name="githubOrganization"
+            ng-model="app.organizationName"
+            ng-model-options="{debounce: 75}"
+            ng-change="app.getRepositories()"
+            required>
+          <div class="error-messages"
+            ng-messages="app.github.githubOrganization.$error"
+            ng-show="app.github.githubOrganization.$dirty">
+            <div ng-message="required">This is required!</div>
+            <div ng-message="not-found">
+              Organization not found
+            </div>
+          </div>
+        </md-input-container>
+      </form>
+    </md-card-content>
+  </md-card>
+</section>
 <section class="results">
   <md-card ng-if="app.organization" flex="50">
     <md-card-header>

@@ -10,6 +10,16 @@ md-card-header-text {
   justify-content: center;
 }
 
+.search {
+  display: flex;
+  justify-content: center;
+}
+
+.search md-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
 .commit-card .commit {
   align-items: flex-start;
 }

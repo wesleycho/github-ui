@@ -23,3 +23,5 @@ Sometimes newer requests obtain a response faster than older ones when querying 
 Concatenating scripts into two minified vendor & app scripts also would reduce the number of http requests made while allowing some caching benefits to apply.
 
 The UI only allows querying for the 30 most recent commits for a selected repository in an organization - it would be nice if this was extended to allow it to query for more using GitHub's paginated api.
+
+The auth layer is a little too tied up with the GitHub api querying in this app - ideally it should be separated out.
