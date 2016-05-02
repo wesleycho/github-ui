@@ -22,7 +22,7 @@
             ng-model="app.organizationName"
             ng-model-options="{debounce: 75}"
             ng-change="app.getRepositories()"
-            required>
+            ng-required="app.isLoggedIn()">
           <div class="error-messages"
             ng-messages="app.github.githubOrganization.$error"
             ng-show="app.github.githubOrganization.$dirty">
