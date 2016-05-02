@@ -174,6 +174,7 @@ describe('app component', () => {
       expect(app.repository).toEqual({
         name: 'baz'
       });
+      expect(app.commits).toBe(null);
       expect(app.noCommits).toBe(false);
 
       $rootScope.$digest();
