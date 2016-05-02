@@ -1,0 +1,68 @@
+<form name="app.github">
+  <md-input-container>
+    <label for="githubOrganization">
+      GitHub Organization
+    </label>
+    <input name="githubOrganization"
+      ng-model="app.organizationName"
+      ng-model-options="{debounce: 75}"
+      ng-change="app.getRepositories()"
+      required>
+    <div class="error-messages"
+      ng-messages="app.github.githubOrganization.$error"
+      ng-show="app.github.githubOrganization.$dirty">
+      <div ng-message="required">This is required!</div>
+      <div ng-message="not-found">
+        Organization not found
+      </div>
+    </div>
+  </md-input-container>
+</form>
+<section class="results">
+  <md-card ng-if="app.organization" flex="50">
+    <md-card-header>
+      <md-card-avatar>
+        <img ng-src="{{app.organization.avatar}}" alt="Avatar">
+      </md-card-avatar>
+      <md-card-header-text>
+        <a target="_blank" ng-href="{{app.organization.url}}"
+          class="md-title">
+          {{app.organization.name}}
+        </a>
+      </md-card-header-text>
+    </md-card-header>
+    <md-card-content>
+      <md-list>
+        <md-list-item ng-repeat="repo in app.repositories | orderBy: '-stargazers' track by repo.id"
+          ng-click="app.selectRepository(repo)">
+          {{repo.name}}
+        </md-list-item>
+      </md-list>
+    </md-card-content>
+  </md-card>
+  <md-card class="commit-card" ng-if="app.repository" flex="50">
+    <md-card-header>
+      {{app.repository.name}}
+    </md-card-header>
+    <md-card-content>
+      <div ng-show="app.noCommits || !app.commits.length">
+        No commits found
+      </div>
+      <md-list>
+        <md-list-item class="commit" ng-repeat="commit in app.commits | orderBy: '-date' track by commit.sha">
+          <div class="hash">
+            <a target="_blank" ng-href="{{::commit.url}}">
+              {{::commit.sha | limitTo: 6}}
+            </a>
+          </div>
+          <div class="messages" title="{{::commit.date | date: 'MMM d, yyyy H:mm'}}">
+            {{::commit.author.name}}
+            <div class="message" ng-repeat="message in commit.messages track by $index">
+              {{::message}}
+            </div>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-card-content>
+  </md-card>
+</section>

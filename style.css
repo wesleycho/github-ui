@@ -1,0 +1,31 @@
+.error-messages {
+  display: #ff0000;
+}
+
+.results {
+  display: flex;
+}
+
+md-card-header-text {
+  justify-content: center;
+}
+
+.commit-card .commit {
+  align-items: flex-start;
+}
+
+.commit-card .commit + * {
+  margin-top: 20px;
+}
+
+.commit-card .commit .hash {
+  width: 55px;
+}
+
+.commit-card .commit .messages {
+  margin-left: 10px;
+}
+
+.commit-card .commit .message {
+  margin-top: 10px;
+}
