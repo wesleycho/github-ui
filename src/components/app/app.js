@@ -64,6 +64,7 @@ function App(Github) {
 
   this.selectRepository = (repository) => {
     this.repository = repository;
+    this.commits = null;
     this.noCommits = false;
     Github.getCommitsForRepo(this.organizationName, repository.name)
       .then(commits => {
